@@ -119,13 +119,14 @@
         }
         .add-btn:hover { background-color: #e0a800; }
 
-        /* 新增：预设选手列表样式 */
+        /* 优化：常驻选手库列表样式 */
         .saved-participant-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px;
             border-bottom: 1px dashed #ccc;
+            font-size: 0.95em;
         }
         .saved-participant-item:last-child {
             border-bottom: none;
@@ -134,24 +135,29 @@
             font-size: 0.8em;
             padding: 4px 8px;
             margin-left: 5px;
-            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
         }
         .saved-participant-info {
             flex-grow: 1;
         }
-        #add-saved-btn {
-            background-color: #5cb85c; /* 绿色按钮 */
+        /* 优化：加入参赛按钮风格 (蓝色，和主按钮一致) */
+        .saved-participant-item .join-btn {
+            background-color: #007bff; /* Primary blue */
             color: white;
+            border: none;
         }
-        #add-saved-btn:hover {
-            background-color: #449d44;
+        .saved-participant-item .join-btn:hover {
+            background-color: #0056b3;
         }
-        #delete-saved-btn {
-            background-color: #f0ad4e; /* 警告色按钮 */
+        /* 优化：删除按钮风格 (红色，和行删除按钮一致) */
+        .saved-participant-item .delete-btn {
+            background-color: #dc3545; /* Danger red */
             color: white;
+            border: none;
         }
-        #delete-saved-btn:hover {
-            background-color: #ec971f;
+        .saved-participant-item .delete-btn:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
@@ -171,7 +177,7 @@
             </div>
             
             <div class="saved-participants-group">
-                <h3>💾 已保存选手预设</h3>
+                <h3>🧑‍🤝‍🧑 常驻选手库</h3>
                 <div id="saved-participants-list">
                     <p style="color: #6c757d; font-size: 0.9em; text-align: center;">加载中...</p>
                 </div>
@@ -212,7 +218,7 @@
 </div>
 
 <script>
-    // --- 配置数据 ---
+    // --- 配置数据 (不变) ---
     const TEAM_NAMES = [
         "宇宙无敌霹雳小组", "秃头也发光队", "菜鸟互啄精英队", "全场最佳气氛组",
         "拖后腿也能赢队", "神级躺赢天团", "一拍入魂暴躁组", "被羽毛球支配队",
@@ -232,11 +238,10 @@
         'XD': '混双'
     };
 
-    let participantIdCounter = 1; // ID从1开始，方便管理
+    let participantIdCounter = 1; 
     let allTeams = {};
 
-    // --- 本地存储操作函数 ---
-
+    // --- 本地存储操作函数 (不变) ---
     function getSavedParticipants() {
         try {
             const saved = localStorage.getItem('savedParticipants');
@@ -255,15 +260,14 @@
         }
     }
     
-    // --- 预设选手管理 ---
-
+    // --- 预设选手管理 (修改 UI 和按钮名称) ---
     function loadSavedParticipantsUI() {
         const savedParticipants = getSavedParticipants();
         const listEl = document.getElementById('saved-participants-list');
         listEl.innerHTML = '';
 
         if (savedParticipants.length === 0) {
-            listEl.innerHTML = '<p style="color: #6c757d; font-size: 0.9em; text-align: center;">暂无保存的选手。</p>';
+            listEl.innerHTML = '<p style="color: #6c757d; font-size: 0.9em; text-align: center;">暂无常驻选手。</p>';
             return;
         }
 
@@ -275,8 +279,8 @@
             item.innerHTML = `
                 <div class="saved-participant-info">${p.name} (${genderText})</div>
                 <div>
-                    <button id="add-saved-btn" onclick="addParticipantFromPreset('${p.name}', '${p.gender}')">添加</button>
-                    <button id="delete-saved-btn" onclick="deleteSavedParticipant('${p.name}')">删除</button>
+                    <button class="join-btn" onclick="addParticipantFromPreset('${p.name}', '${p.gender}')">加入参赛</button>
+                    <button class="delete-btn" onclick="deleteSavedParticipant('${p.name}')">删除</button>
                 </div>
             `;
             listEl.appendChild(item);
@@ -285,27 +289,35 @@
 
     function saveParticipant(name, gender) {
         if (!name) return;
-        const savedParticipants = getSavedParticipants();
+        let savedParticipants = getSavedParticipants();
         
         // 检查是否已存在同名选手
         const exists = savedParticipants.some(p => p.name === name);
-        if (exists) return; // 如果存在，则不重复保存
+        if (exists) {
+            // 如果存在，更新其性别（虽然很少发生，但确保数据最新）
+            const index = savedParticipants.findIndex(p => p.name === name);
+            if (savedParticipants[index].gender !== gender) {
+                 savedParticipants[index].gender = gender;
+                 saveParticipantsToStorage(savedParticipants);
+            }
+            return;
+        }
 
         savedParticipants.push({ name, gender });
         saveParticipantsToStorage(savedParticipants);
-        loadSavedParticipantsUI(); // 刷新预设列表
+        loadSavedParticipantsUI(); 
     }
 
     function deleteSavedParticipant(nameToDelete) {
-        if (!confirm(`确定要删除预设选手 "${nameToDelete}" 吗？`)) return;
+        if (!confirm(`确定要从常驻选手库中删除 "${nameToDelete}" 吗？`)) return;
         
         let savedParticipants = getSavedParticipants();
         savedParticipants = savedParticipants.filter(p => p.name !== nameToDelete);
         saveParticipantsToStorage(savedParticipants);
-        loadSavedParticipantsUI(); // 刷新预设列表
+        loadSavedParticipantsUI(); 
     }
 
-    // --- 参赛选手列表管理 ---
+    // --- 参赛选手列表管理 (不变) ---
 
     function getParticipantsData() {
         const participants = [];
@@ -314,7 +326,6 @@
             const name = row.querySelector('.name-input').value.trim();
             const gender = row.querySelector('.gender-select').value;
             
-            // 2. 默认赛制规则 (保持不变)
             const formats = [];
             if (gender === 'male') {
                 formats.push('MD', 'XD');
@@ -368,13 +379,14 @@
     }
 
     function initializeParticipantList() {
-        // 初始化时加载两个空白行作为默认输入
-        createParticipantRow('黄豆豆', 'female');
-        createParticipantRow('大头兵', 'male');
+        // 首次加载时，默认添加两个示例选手，帮助用户理解
+        if (document.querySelectorAll('.participant-row').length === 0) {
+            createParticipantRow('黄豆豆', 'female');
+            createParticipantRow('大头兵', 'male');
+        }
     }
 
-    // --- 分组和比赛逻辑 (保持不变) ---
-
+    // --- 分组和比赛逻辑 (不变) ---
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -441,37 +453,32 @@
             return teams;
         }
 
-        let hasEnoughTeams = false;
-
+        // --- 执行组队 ---
+        
         // 男双
         if (maleMD_Pool.length >= 2) {
             allTeams['MD'] = createDoubles(maleMD_Pool, 'MD');
-            if (allTeams['MD'].length >= 2) hasEnoughTeams = true;
-
             if (maleMD_Pool.length === 1) {
                  statusEl.textContent += '⚠️ 男双人数为单数，有1人轮空。\n';
             } else if (allTeams['MD'].length < 2) {
-                statusEl.textContent += '⚠️ 男双（男双）队伍数量不足2队。\n';
+                statusEl.textContent += '⚠️ 男双队伍数量不足2队。\n';
             }
         }
 
         // 女双
         if (femaleWD_Pool.length >= 2) {
             allTeams['WD'] = createDoubles(femaleWD_Pool, 'WD');
-            if (allTeams['WD'].length >= 2) hasEnoughTeams = true;
-
             if (femaleWD_Pool.length === 1) {
                  statusEl.textContent += '⚠️ 女双人数为单数，有1人轮空。\n';
             } else if (allTeams['WD'].length < 2) {
-                statusEl.textContent += '⚠️ 女双（女双）队伍数量不足2队。\n';
+                statusEl.textContent += '⚠️ 女双队伍数量不足2队。\n';
             }
         }
         
         // 混双
         if (maleXD_Pool.length >= 1 && femaleXD_Pool.length >= 1) {
             allTeams['XD'] = createMixedDoubles(maleXD_Pool, femaleXD_Pool);
-            if (allTeams['XD'].length >= 2) hasEnoughTeams = true;
-                
+            
             let remainingMale = maleXD_Pool.length;
             let remainingFemale = femaleXD_Pool.length;
             if (remainingMale > 0 || remainingFemale > 0) {
@@ -518,9 +525,9 @@
             return;
         }
 
-        let html = '';
         let totalFixtureCount = 0;
-
+        let html = '';
+        
         for (const format in allTeams) {
             const teams = allTeams[format];
             if (teams.length >= 2) {
@@ -560,8 +567,8 @@
     
     // 页面加载时初始化
     window.onload = function() {
-        loadSavedParticipantsUI(); // 先加载预设列表
-        initializeParticipantList(); // 再加载默认参赛列表
+        loadSavedParticipantsUI();
+        initializeParticipantList(); 
     };
 </script>
 </body>
