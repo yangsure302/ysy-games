@@ -255,4 +255,148 @@
 
 <div class="container">
     
-    <h2 class="main-header">🔥 YSY
+    <h2 class="main-header">🔥 YSY和她的好朋友们的石头剪刀布王者对决 🔥</h2>
+
+    <div class="content-area">
+        <div class="player-control-section">
+            <div class="section">
+                <h3>👥 玩家管理</h3>
+                <input type="text" id="player-name-input" placeholder="输入玩家姓名">
+                <button id="add-player-btn" onclick="addPlayer()">添加玩家</button>
+                <button id="clear-players-btn" onclick="clearAllPlayers()">清空所有玩家</button>
+                <div id="players-list" style="margin-top: 15px;">
+                    <p class="no-players-message">请添加玩家</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="game-area">
+                <div class="game-controls">
+                    <h3>🕹️ 游戏控制</h3>
+                    <p style="color: #ccc;">勾选要参与本局对决的玩家：</p>
+                    <div id="active-players-selection">
+                        <p class="no-players-message">请先添加玩家</p>
+                    </div>
+                    <button id="play-btn" onclick="playRound()">石头剪刀布！</button>
+                </div>
+
+                <div class="game-results">
+                    <h3>📝 对决结果</h3>
+                    <div id="current-round-result">
+                        <p class="no-players-message">点击“石头剪刀布！”开始对决</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ranking-panel">
+                <div class="rank-column">
+                    <div class="rank-title">🥇 总王者榜 (胜场最多)</div>
+                    <div id="winner-ranking">
+                        <p class="no-rank-message">暂无排名</p>
+                    </div>
+                </div>
+                <div class="rank-column">
+                    <div class="rank-title">🤡 总冤种榜 (败场最多)</div>
+                    <div id="loser-ranking">
+                        <p class="no-rank-message">暂无排名</p>
+                    </div>
+                </div>
+                 <div class="rank-column">
+                    <div class="rank-title">🔥 连胜王 (连续胜场)</div>
+                    <div id="streak-winner-ranking">
+                        <p class="no-rank-message">暂无排名</p>
+                    </div>
+                </div>
+                <div class="rank-column">
+                    <div class="rank-title">🥶 连败王 (连续败场)</div>
+                    <div id="streak-loser-ranking">
+                        <p class="no-rank-message">暂无排名</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-history section">
+                <h3>📜 回合记录 (最近 5 局)</h3>
+                <div id="round-history">
+                    <p class="no-players-message">无历史记录</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const MOVES = {
+        ROCK: { name: '石头', emoji: '🪨' },
+        PAPER: { name: '布', emoji: '📄' },
+        SCISSORS: { name: '剪刀', emoji: '✂️' }
+    };
+    
+    const playerScores = {}; 
+    let allPlayerNames = [];
+    let roundHistory = []; 
+
+    // --- 玩家管理 ---
+    function addPlayer() {
+        const input = document.getElementById('player-name-input');
+        let playerName = input.value.trim();
+
+        if (!playerName || allPlayerNames.includes(playerName)) {
+            alert(playerName ? '该玩家已存在！' : '请输入玩家姓名！');
+            return;
+        }
+
+        allPlayerNames.push(playerName);
+        playerScores[playerName] = { wins: 0, losses: 0, draws: 0, winStreak: 0, loseStreak: 0, totalGames: 0 };
+        input.value = '';
+        
+        updatePlayersList();
+        updateActivePlayersSelection();
+        updateRankings();
+    }
+
+    function removePlayer(nameToRemove) {
+        allPlayerNames = allPlayerNames.filter(name => name !== nameToRemove);
+        delete playerScores[nameToRemove];
+        updatePlayersList();
+        updateActivePlayersSelection();
+        updateRankings();
+    }
+    
+    function clearAllPlayers() {
+        if (confirm('确定要清空所有玩家、分数和历史记录吗？')) {
+            allPlayerNames = [];
+            roundHistory = [];
+            for (const key in playerScores) { delete playerScores[key]; }
+            updatePlayersList();
+            updateActivePlayersSelection();
+            updateRankings();
+            updateRoundHistory();
+            document.getElementById('current-round-result').innerHTML = '<p class="no-players-message">点击“石头剪刀布！”开始对决</p>';
+        }
+    }
+
+    function updatePlayersList() {
+        const listDiv = document.getElementById('players-list');
+        if (allPlayerNames.length === 0) {
+            listDiv.innerHTML = '<p class="no-players-message">请添加玩家</p>';
+            return;
+        }
+        listDiv.innerHTML = allPlayerNames.map(name => `
+            <label>
+                <span>${name}</span>
+                <span class="player-score">W:${playerScores[name].wins} L:${playerScores[name].losses}</span>
+                <button onclick="event.stopPropagation(); removePlayer('${name}')">删除</button>
+            </label>
+        `).join('');
+    }
+
+    function updateActivePlayersSelection() {
+        const selectionDiv = document.getElementById('active-players-selection');
+        if (allPlayerNames.length === 0) {
+            selectionDiv.innerHTML = '<p class="no-players-message">请先添加玩家</p>';
+            return;
+        }
+        selectionDiv.innerHTML = allPlayerNames.map(name => `
+            <label style="background-color: rgba(74, 245, 255, 0.2);
