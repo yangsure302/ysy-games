@@ -3,30 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏆 2025帆书羽毛球大作战 🏆</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <title>🏆 羽毛球爆笑分组大作战 🏆</title>
     <style>
-        /* ==================== 奥运风格配色 ==================== */
+        /* ==================== 简约竞技风格配色 (保持不变) ==================== */
         :root {
-            --olympic-blue: #0081C6;
-            --olympic-yellow: #FCB131;
-            --olympic-black: #212121;
-            --olympic-green: #00A651;
-            --olympic-red: #EE334E;
-            --bg-light-grey: #f0f2f5; /* 略带灰度的背景 */
-            --text-dark: #333;
-            --text-light: #fff;
-            --button-primary: var(--olympic-blue);
-            --button-danger: var(--olympic-red);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --card-bg: #ffffff;
+            --primary-blue: #007bff; /* 竞技蓝 (类似奥运蓝) */
+            --accent-gold: #ffc107; /* 强调金 */
+            --bg-light: #f8f9fa;   /* 浅灰背景 */
+            --bg-white: #ffffff;   /* 模块背景 */
+            --text-dark: #212529;  /* 深色文字 */
+            --border-light: #dee2e6;
+            --shadow-subtle: 0 4px 6px rgba(0, 0, 0, 0.08);
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--olympic-blue) 0%, var(--olympic-green) 100%);
+            padding: 30px;
+            background-color: var(--bg-light);
             color: var(--text-dark);
             display: flex;
             justify-content: center;
@@ -35,232 +29,219 @@
         }
 
         .container {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            max-width: 900px;
+            background-color: var(--bg-white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* 提升立体感 */
+            max-width: 800px;
             width: 100%;
             text-align: center;
-            border: 5px solid var(--olympic-yellow); /* 奥运黄边框 */
+            border-top: 5px solid var(--primary-blue); /* 顶部蓝色强调线 */
         }
 
-        /* ==================== 标题和段落 ==================== */
+        /* ==================== 标题和段落 (保持不变) ==================== */
         h1 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 3.5em;
-            color: var(--olympic-red);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 25px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            background: linear-gradient(90deg, var(--olympic-blue), var(--olympic-red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.8em;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--accent-gold); /* 金色下划线 */
+            padding-bottom: 10px;
+            letter-spacing: 1px;
+            font-weight: 700;
         }
 
         h2 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 2.2em;
-            color: var(--olympic-black);
+            font-size: 1.8em;
+            color: var(--text-dark);
             margin-top: 30px;
-            margin-bottom: 20px;
-            border-bottom: 3px solid var(--olympic-green);
-            padding-bottom: 10px;
-            display: inline-block; /* 让边框只包围文字 */
-        }
-
-        p {
-            font-size: 1.1em;
-            color: var(--text-dark);
             margin-bottom: 15px;
-        }
-
-        /* ==================== 输入框和按钮 ==================== */
-        input[type="text"] {
-            width: calc(100% - 22px);
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 2px solid var(--olympic-blue);
-            border-radius: 8px;
-            font-size: 1.1em;
-            color: var(--text-dark);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        button {
-            background-color: var(--button-primary);
-            color: var(--text-light);
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin: 5px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        #add-player-btn { background-color: var(--olympic-green); }
-        #add-player-btn:hover { background-color: #008a44; }
-
-        #clear-players-btn { background-color: var(--button-danger); }
-        #clear-players-btn:hover { background-color: #d12e45; }
-
-        #group-players-btn { 
-            background-color: var(--olympic-blue); 
-            font-size: 1.3em;
-            padding: 15px 30px;
-            margin-top: 20px;
-            border: 2px solid var(--olympic-yellow);
-        }
-        #group-players-btn:hover { background-color: #006bb0; }
-
-        /* ==================== 玩家列表 ==================== */
-        #players-list {
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            min-height: 80px;
-            background-color: var(--bg-light-grey);
+            font-weight: 600;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-blue);
             text-align: left;
         }
 
-        #players-list div {
+        p {
+            font-size: 1.05em;
+            color: #6c757d;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        /* ==================== 输入框和按钮 (保持不变) ==================== */
+        input[type="text"], input[type="number"] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 1em;
+            color: var(--text-dark);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        /* 按钮颜色 */
+        #add-player-btn { 
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+        }
+        #add-player-btn:hover { 
+            background-color: #0056b3; 
+            transform: translateY(-1px);
+        }
+
+        #clear-players-btn { 
+            background-color: #dc3545; /* 红色警告 */
+            color: var(--bg-white);
+        }
+        #clear-players-btn:hover { 
+            background-color: #c82333; 
+        }
+
+        #group-players-btn { 
+            background-color: var(--accent-gold); 
+            color: var(--text-dark); 
+            font-size: 1.2em;
+            padding: 12px 25px;
+            margin-top: 15px;
+            border: 2px solid var(--primary-blue);
+        }
+        #group-players-btn:hover { 
+            background-color: #e0a800; 
+            transform: translateY(-2px);
+        }
+
+        /* ==================== 玩家列表 (保持不变) ==================== */
+        #players-list {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            min-height: 50px;
+            background-color: var(--bg-white);
+            text-align: left;
+        }
+
+        /* 列表中每个玩家的样式 */
+        #players-list > div { 
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 10px;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
-            font-size: 1.1em;
-            color: var(--text-dark);
+            border-bottom: 1px dashed var(--border-light);
+            font-size: 1em;
         }
 
-        #players-list div:last-child {
+        #players-list > div:last-child {
             border-bottom: none;
         }
 
-        #players-list div button {
-            background-color: #888;
-            color: var(--text-light);
-            padding: 5px 10px;
-            font-size: 0.9em;
+        #players-list > div button {
+            background-color: #6c757d;
+            color: var(--bg-white);
+            padding: 4px 8px;
+            font-size: 0.8em;
             margin: 0;
         }
-
-        #players-list div button:hover {
-            background-color: #666;
+        #players-list > div button:hover {
+            background-color: #5a6268;
         }
 
-        /* ==================== 分组结果 ==================== */
+
+        /* ==================== 分组结果 (保持不变) ==================== */
         #group-results {
-            border: 2px dashed var(--olympic-red);
+            border: 2px solid var(--primary-blue);
             border-radius: 10px;
             padding: 20px;
             margin-top: 30px;
-            background-color: #fffaf0; /* 略带暖色调的背景 */
+            background-color: #e9f0f8; /* 浅蓝色背景突出结果区域 */
             text-align: left;
-            min-height: 100px;
-            box-shadow: inset 0 0 15px rgba(255, 165, 0, 0.1);
+            min-height: 80px;
         }
 
-        #group-results div {
+        /* 分组块样式 */
+        #group-results > div { 
             margin-bottom: 15px;
             padding: 10px;
-            background-color: #f9f9f9;
-            border-left: 5px solid var(--olympic-blue);
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: var(--bg-white);
+            border-left: 5px solid var(--accent-gold); /* 左侧金色条 */
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        #group-results div strong {
+        #group-results > div strong {
             display: block;
-            font-size: 1.4em;
-            color: var(--olympic-blue);
-            margin-bottom: 8px;
-            font-family: 'Oswald', sans-serif;
-            letter-spacing: 1px;
+            font-size: 1.3em;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            font-weight: 700;
         }
 
-        #group-results div span {
+        /* 玩家名字标签样式 */
+        #group-results > div span {
             display: inline-block;
-            background-color: var(--olympic-yellow);
-            color: var(--olympic-black);
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 4px;
             margin: 3px;
-            font-weight: bold;
-            font-size: 1.1em;
+            font-size: 0.95em;
         }
 
         /* 没有玩家时的提示 */
         .empty-message {
-            color: #888;
+            color: #999;
             font-style: italic;
             margin-top: 10px;
+            text-align: center;
         }
 
-        /* ==================== 媒体查询 (响应式设计) ==================== */
+        /* ==================================== */
+        /* 📱 媒体查询：适配手机和小尺寸屏幕 */
+        /* ==================================== */
         @media screen and (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 15px;
             }
             .container {
                 padding: 20px;
-                border-width: 3px;
             }
             h1 {
-                font-size: 2.5em;
-                margin-bottom: 15px;
+                font-size: 2.2em;
             }
             h2 {
-                font-size: 1.8em;
-                margin-top: 20px;
-                margin-bottom: 15px;
+                font-size: 1.5em;
             }
-            input[type="text"] {
+            /* 输入框占满宽度 */
+            input[type="text"], input[type="number"] {
                 width: calc(100% - 20px);
-                padding: 10px;
-                font-size: 1em;
+                margin-bottom: 10px;
             }
             button {
-                padding: 10px 20px;
-                font-size: 1em;
-                margin: 5px 0; /* 按钮在手机上垂直堆叠 */
-                width: 100%; /* 按钮占据全宽 */
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            /* 让添加/清空按钮在手机端水平分配空间，避免拥挤 */
+            .player-control-section button {
+                width: calc(50% - 10px);
+                margin: 5px 2px;
+                display: inline-block;
             }
             #group-players-btn {
                 font-size: 1.1em;
-                padding: 12px 25px;
-                width: auto; /* 重置为auto，让内边距决定宽度 */
-            }
-            #players-list, #group-results {
-                padding: 10px;
-            }
-            #players-list div {
-                font-size: 1em;
-                padding: 6px 8px;
-            }
-            #group-results div strong {
-                font-size: 1.2em;
-            }
-            #group-results div span {
-                font-size: 1em;
-                padding: 4px 8px;
+                padding: 10px 20px;
+                width: auto; /* 允许按钮根据内容自适应宽度 */
             }
         }
     </style>
@@ -273,8 +254,10 @@
 
     <h2>玩家管理</h2>
     <input type="text" id="player-name-input" placeholder="输入玩家姓名 (如: 大头兵张三)">
-    <button id="add-player-btn" onclick="addPlayer()">添加玩家</button>
-    <button id="clear-players-btn" onclick="clearAllPlayers()">清空所有玩家</button>
+    <div class="player-control-section">
+        <button id="add-player-btn" onclick="addPlayer()">添加玩家</button>
+        <button id="clear-players-btn" onclick="clearAllPlayers()">清空所有玩家</button>
+    </div>
 
     <div id="players-list">
         <p class="empty-message">暂无玩家，快来添加吧！</p>
@@ -293,9 +276,139 @@
 
 <script>
     let players = [];
+    
+    // ====================================
+    // 🏸 神经病分组名称列表
+    // ====================================
     const funnyGroupNames = [
         "宇宙无敌霹雳小组", "秃头也发光队", "菜鸟互啄精英队", "全场最佳气氛组",
         "拖后腿也能赢队", "神级躺赢天团", "一拍入魂暴躁组", "被羽毛球支配队",
-        "佛系养生球友队", "扣杀全靠吼队", "发球出界艺术团", "黑洞吸球大师",
-        "五花八门随便打队", "躺平但能赢队", "人间清醒划水队", "羽林萌主驾到",
-        "反人类反应速度队", "球场老六联盟", "非物质文化遗产队
+        "佛系养生球友队", "扣杀全靠吼队", "一米五扣杀队", "发球出界艺术团", 
+        "黑洞吸球大师", "五花八门随便打队", "躺平但能赢队", "人间清醒划水队", 
+        "羽林萌主驾到", "反人类反应速度队", "球场老六联盟", "非物质文化遗产队", 
+        "干饭人干球队", "夕阳红慢摇队", "发际线危机组", "爱与和平划水队",
+        "随机应变杂牌军", "一鸣惊人黑马队", "深藏不露划水党", "智商高地球技盆地队", 
+        "只负责帅不负责赢队", "靠颜值取胜队", "战术全靠蒙队", "喝水休息专业户",
+        "听见风声就躲队", "拒绝跑动联盟", "全员黑眼圈队", "退役电竞选手队",
+        "对家失误是唯一赢面队", "拍子都是借的队", "主打一个陪伴队", "谁爱赢谁赢队"
+    ];
+
+    function addPlayer() {
+        const input = document.getElementById('player-name-input');
+        const playerName = input.value.trim();
+
+        if (playerName && !players.includes(playerName)) {
+            players.push(playerName);
+            input.value = '';
+            updatePlayersList();
+        } else if (!playerName) {
+            alert('请输入玩家姓名！');
+        } else {
+            alert('该玩家已存在！');
+        }
+    }
+
+    function removePlayer(nameToRemove) {
+        players = players.filter(name => name !== nameToRemove);
+        updatePlayersList();
+    }
+
+    function clearAllPlayers() {
+        if (confirm('确定要清空所有玩家吗？')) {
+            players = [];
+            updatePlayersList();
+            document.getElementById('group-results').innerHTML = '<p class="empty-message">点击上方按钮开始分组。</p>';
+        }
+    }
+
+    function updatePlayersList() {
+        const listDiv = document.getElementById('players-list');
+        if (players.length === 0) {
+            listDiv.innerHTML = '<p class="empty-message">暂无玩家，快来添加吧！</p>';
+            return;
+        }
+        listDiv.innerHTML = players.map(player => `
+            <div>
+                <span>${player}</span>
+                <button onclick="removePlayer('${player}')">删除</button>
+            </div>
+        `).join('');
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function groupPlayers() {
+        const groupSizeInput = document.getElementById('group-size-input');
+        const groupSize = parseInt(groupSizeInput.value, 10);
+
+        if (players.length === 0) {
+            alert('请先添加玩家！');
+            return;
+        }
+        if (isNaN(groupSize) || groupSize < 1) {
+            alert('每组人数必须是大于0的整数！');
+            return;
+        }
+        if (players.length < groupSize) {
+            alert('玩家数量不足以分成一组！');
+            return;
+        }
+
+        const shuffledPlayers = shuffleArray([...players]); // 复制一份并打乱
+        const numGroups = Math.ceil(shuffledPlayers.length / groupSize);
+        const groups = [];
+
+        for (let i = 0; i < numGroups; i++) {
+            groups.push([]);
+        }
+
+        // 轮流分配玩家到各个组，确保分组更均匀
+        for (let i = 0; i < shuffledPlayers.length; i++) {
+            groups[i % numGroups].push(shuffledPlayers[i]);
+        }
+        
+        displayGroupResults(groups);
+    }
+
+    function displayGroupResults(groups) {
+        const resultsDiv = document.getElementById('group-results');
+        let html = '';
+        
+        // 复制名称列表并打乱，保证随机和不重复
+        const shuffledNames = shuffleArray([...funnyGroupNames]); 
+        let nameIndex = 0;
+
+        groups.forEach((group, index) => {
+            let groupName;
+            
+            if (nameIndex < shuffledNames.length) {
+                groupName = shuffledNames[nameIndex];
+                nameIndex++;
+            } else {
+                // 如果搞笑名称用完了，使用默认名称
+                groupName = `没有名字也要打球队 ${index + 1}`; 
+            }
+
+            html += `
+                <div>
+                    <strong>${groupName}</strong>
+                    ${group.map(player => `<span>${player}</span>`).join('')}
+                </div>
+            `;
+        });
+        resultsDiv.innerHTML = html;
+    }
+
+    // 页面加载时初始化
+    window.onload = function() {
+        updatePlayersList();
+    };
+</script>
+</body>
+</html>
