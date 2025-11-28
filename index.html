@@ -272,7 +272,7 @@
         </div>
         
         <div class="box">
-            <h3>🧑‍🤝‍🧑 常驻选手库</h3>
+            <h3>🙋🏻‍♀️常驻选手库</h3>
             <div id="saved-participants-list" class="roster-section">
                 <p style="color: #6C757D; font-size: 0.9em; text-align: center;">加载中...</p>
             </div>
@@ -289,7 +289,7 @@
             
             <div class="output-wrapper">
                 <div class="controls-row">
-                    <button class="btn btn-draw" id="draw-btn" onclick="drawTeams()">随机为健儿组队</button>
+                    <button class="btn btn-draw" id="draw-btn" onclick="drawTeams()">🧑‍🤝‍🧑随机为健儿组队</button>
                 </div>
                 <div class="result-section">
                     <h3>🏅 队伍分配结果</h3>
@@ -543,7 +543,7 @@
         loadCurrentRosterUI();
     }
 
-    // --- 核心分组和比赛逻辑 (不变) ---
+    // --- 核心分组和比赛逻辑 (已修改) ---
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -588,10 +588,10 @@
             while (pool.length >= 2) {
                 const player1 = pool.pop();
                 const player2 = pool.pop();
-                // 在队伍名称中使用选手的永久编号
+                // 重点修改：移除 (ID X)
                 teams.push({
                     name: getRandomTeamName() + ` (${FORMAT_NAMES[format]})`, 
-                    members: [`${player1.name} (ID ${player1.number})`, `${player2.name} (ID ${player2.number})`]
+                    members: [`${player1.name}`, `${player2.name}`]
                 });
             }
             return teams;
@@ -606,9 +606,10 @@
             for (let i = 0; i < numTeams; i++) {
                 const malePlayer = malePool.pop();
                 const femalePlayer = femalePool.pop();
+                // 重点修改：移除 (ID X)
                 teams.push({
                     name: getRandomTeamName() + ` (${FORMAT_NAMES['XD']})`,
-                    members: [`${malePlayer.name} (ID ${malePlayer.number})`, `${femalePlayer.name} (ID ${femalePlayer.number})`]
+                    members: [`${malePlayer.name}`, `${femalePlayer.name}`]
                 });
             }
             return teams;
