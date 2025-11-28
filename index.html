@@ -19,7 +19,7 @@
             --olympic-yellow: #FCB131;   /* 黄色 - 参赛按钮 */
             --olympic-black: #000000;    /* 黑色 - 添加选手按钮 */
             --olympic-green: #00A651;    /* 绿色 - 删除按钮 */
-            --olympic-red: #EF3340;      /* 红色 - 生成赛程按钮 */
+            --olympic-red: #EF3340;      /* 红色 - 生成赛程/清空按钮 */
         }
         
         body {
@@ -77,6 +77,14 @@
             display: flex;
             flex-direction: column;
             max-height: 80vh;
+        }
+
+        /* 新增：列表头部控制区 */
+        .list-header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px; /* 标题和列表的间距 */
         }
         
         /* 选手管理区 */
@@ -163,10 +171,15 @@
         } 
         .btn-draw:hover { background-color: #006AB0; }
         
-        .btn-fixture { 
+        /* 生成赛程/清空按钮共享红色 */
+        .btn-fixture, .btn-clear { 
             background-color: var(--olympic-red); /* 红色 */
+            width: auto; /* 清空按钮宽度自适应 */
+            padding: 6px 10px; /* 清空按钮小尺寸 */
+            font-size: 0.9em;
+            margin-top: 0;
         } 
-        .btn-fixture:hover { background-color: #D62F3C; }
+        .btn-fixture:hover, .btn-clear:hover { background-color: #D62F3C; }
         
         /* 列表操作按钮调整 - 缩小和并排 */
         .participant-item .actions button {
@@ -272,14 +285,20 @@
         </div>
         
         <div class="box">
-            <h3>🙋🏻‍♀️常驻选手库</h3>
+            <div class="list-header-controls">
+                <h3>🙋🏻‍♀️常驻选手库</h3>
+                <button class="btn btn-clear" onclick="clearSavedParticipants()">🗑️ 一键清空</button>
+            </div>
             <div id="saved-participants-list" class="roster-section">
                 <p style="color: #6C757D; font-size: 0.9em; text-align: center;">加载中...</p>
             </div>
         </div>
 
         <div class="box">
-            <h3>🏃 本次参赛健儿</h3>
+            <div class="list-header-controls">
+                <h3>🏃 本次参赛健儿</h3>
+                <button class="btn btn-clear" onclick="clearCurrentRoster()">🗑️ 一键清空</button>
+            </div>
             <div id="current-participants-list" class="roster-section">
                 <p style="color: #6C757D; font-size: 0.9em; text-align: center;">从常驻选手库选择添加。</p>
             </div>
@@ -525,6 +544,28 @@
         loadSavedParticipantsUI();
     }
 
+    /**
+     * 行为：清空常驻选手库 (包括LocalStorage)
+     */
+    function clearSavedParticipants() {
+        if (getSavedParticipants().length === 0) return;
+        if (!confirm("⚠️ 确定要清空【常驻选手库】的所有数据吗？此操作不可逆！")) return;
+
+        localStorage.removeItem('savedParticipants');
+        // 同时清空当前参赛名单，因为它们的引用会失效
+        currentRoster = [];
+        allTeams = {};
+        
+        loadSavedParticipantsUI();
+        loadCurrentRosterUI();
+        document.getElementById('team-results').innerHTML = '<p style="color: #6C757D;">请从左侧选择参赛健儿后，点击上方按钮进行分组。</p>';
+        document.getElementById('fixture-results').innerHTML = '<p style="color: #6C757D;">队伍随机分组完成后，点击上方按钮生成比赛顺序。</p>';
+        document.getElementById('draw-status').textContent = '';
+        document.getElementById('fixture-status').textContent = '';
+
+        alert("常驻选手库已清空，本次参赛健儿名单也已重置。");
+    }
+
 
     // --- 参赛健儿名单逻辑 ---
 
@@ -543,7 +584,26 @@
         loadCurrentRosterUI();
     }
 
-    // --- 核心分组和比赛逻辑 (已修改) ---
+    /**
+     * 行为：清空本次参赛健儿名单
+     */
+    function clearCurrentRoster() {
+        if (currentRoster.length === 0) return;
+        if (!confirm("确定要清空【本次参赛健儿】名单吗？")) return;
+
+        currentRoster = [];
+        allTeams = {}; // 清空队伍分配结果
+        
+        loadCurrentRosterUI();
+        document.getElementById('team-results').innerHTML = '<p style="color: #6C757D;">请从左侧选择参赛健儿后，点击上方按钮进行分组。</p>';
+        document.getElementById('fixture-results').innerHTML = '<p style="color: #6C757D;">队伍随机分组完成后，点击上方按钮生成比赛顺序。</p>';
+        document.getElementById('draw-status').textContent = '';
+        document.getElementById('fixture-status').textContent = '';
+        
+        alert("本次参赛健儿名单已清空。");
+    }
+
+    // --- 核心分组和比赛逻辑 (不变) ---
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -588,7 +648,7 @@
             while (pool.length >= 2) {
                 const player1 = pool.pop();
                 const player2 = pool.pop();
-                // 重点修改：移除 (ID X)
+                // 队伍分配结果只显示名字
                 teams.push({
                     name: getRandomTeamName() + ` (${FORMAT_NAMES[format]})`, 
                     members: [`${player1.name}`, `${player2.name}`]
@@ -606,7 +666,7 @@
             for (let i = 0; i < numTeams; i++) {
                 const malePlayer = malePool.pop();
                 const femalePlayer = femalePool.pop();
-                // 重点修改：移除 (ID X)
+                // 队伍分配结果只显示名字
                 teams.push({
                     name: getRandomTeamName() + ` (${FORMAT_NAMES['XD']})`,
                     members: [`${malePlayer.name}`, `${femalePlayer.name}`]
