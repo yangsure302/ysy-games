@@ -74,7 +74,7 @@
             margin-bottom: 20px;
         }
 
-        /* 布局保持不变 */
+        /* PC端布局（默认 Flex 布局） */
         .content-area {
             display: flex;
             gap: 30px;
@@ -249,6 +249,61 @@
             text-align: center;
             margin-top: 10px;
         }
+
+        /* ==================================== */
+        /* 📱 媒体查询：适配手机和小尺寸屏幕 */
+        /* ==================================== */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            /* 1. 核心布局改为垂直堆叠 */
+            .content-area {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .player-control-section {
+                flex: none; /* 移除固定宽度限制 */
+                width: 100%;
+            }
+
+            .game-area {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            /* 2. 排行榜改为垂直堆叠 */
+            .ranking-panel {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .rank-column {
+                width: 100%;
+                padding: 15px;
+            }
+
+            /* 3. 字体和内边距微调 */
+            .main-header {
+                font-size: 2em;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+            h3 {
+                font-size: 1.4em;
+                margin-top: 15px;
+            }
+            .section {
+                padding: 15px;
+            }
+            #play-btn {
+                font-size: 1.2em;
+                padding: 15px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -372,7 +427,6 @@
             updatePlayersList();
             updateActivePlayersSelection();
             updateRankings();
-            updateRoundHistory();
             document.getElementById('current-round-result').innerHTML = '<p class="no-players-message">点击“石头剪刀布！”开始对决</p>';
         }
     }
