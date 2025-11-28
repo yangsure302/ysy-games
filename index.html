@@ -366,8 +366,9 @@
     // --- 辅助函数 ---
 
     function getNextParticipantNumber(participants) {
-        // 只有在添加新选手时，才需要找最大编号并+1
+        // V21.6 修正：获取当前最大编号，用于给新选手编号
         if (participants.length === 0) return 1;
+        // 查找最大的现有编号，保证新编号唯一且递增
         const maxNum = participants.reduce((max, p) => Math.max(max, p.number || 0), 0);
         return maxNum + 1;
     }
@@ -385,7 +386,8 @@
     }
 
     /**
-     * 获取保存的选手数据，并修正（给缺少 number 属性的选手分配 number，并保证连续）
+     * 获取保存的选手数据，并修正（保证编号从1开始连续，且不改变顺序）
+     * ！！！核心修改逻辑！！！
      */
     function getSavedParticipants() {
         try {
@@ -394,12 +396,13 @@
             
             let needsSaving = false;
             
-            // 1. 排序：按名字排序，以便在编号重新分配时保持稳定
-            participants.sort((a, b) => a.name.localeCompare(b.name));
+            // V21.6 修正：移除 V21.5 中的按名字排序
+            // 列表顺序保持不变（即加入时的顺序）
 
-            // 2. 重新分配编号，保证连续性
+            // 重新分配编号，保证连续性
             for (let i = 0; i < participants.length; i++) {
                 const requiredNumber = i + 1;
+                // 只要编号不是 i+1，就需要重新分配
                 if (participants[i].number !== requiredNumber) {
                     participants[i].number = requiredNumber;
                     needsSaving = true;
@@ -409,7 +412,7 @@
             // 如果有修正，立即保存修正后的数据
             if (needsSaving) {
                  localStorage.setItem('savedParticipants', JSON.stringify(participants));
-                 console.log("常驻选手编号已重新分配并保存。");
+                 console.log("常驻选手编号已重新分配并保存为连续序列。");
             }
             
             return participants;
@@ -443,7 +446,7 @@
             return;
         }
 
-        // 此时 savedParticipants 已经是按 1, 2, 3... 连续编号的
+        // 此时 savedParticipants 已经是按 1, 2, 3... 连续编号的，且顺序保持为加入时的顺序
         savedParticipants.forEach((p) => {
             const item = document.createElement('div');
             item.className = 'participant-item';
@@ -509,23 +512,23 @@
             return;
         }
         
-        let savedParticipants = getSavedParticipants();
+        let savedParticipants = getSavedParticipants(); // 获取当前连续编号的列表
         const existingPlayer = savedParticipants.find(p => p.name === name);
 
         if (existingPlayer) {
             // 如果已存在，仅更新性别
             existingPlayer.gender = gender;
             alert(`选手 "${name}" 已存在，已更新性别为 ${gender === 'male' ? '男' : '女'} (ID ${existingPlayer.number})。`);
-            saveParticipantsToStorage(savedParticipants); // 因为 getSavedParticipants 已经修正了编号，这里直接保存即可
+            saveParticipantsToStorage(savedParticipants); 
         } else {
-            // 只有新增时，才使用 max+1 的逻辑，因为 getSavedParticipants 已经保证了当前是连续的
+            // 新增选手：加入列表末尾，并获取当前最大号 + 1 作为编号
             const newNumber = getNextParticipantNumber(savedParticipants);
             savedParticipants.push({ name, gender, number: newNumber });
             alert(`选手 "${name}" 已成功添加到常驻选手库 (ID ${newNumber})。`);
             saveParticipantsToStorage(savedParticipants); 
         }
 
-        loadSavedParticipantsUI(); 
+        loadSavedParticipantsUI(); // 重新加载列表，可能会触发编号修正（但通常不会，因为新号是 max+1）
         nameInput.value = '';
         selectGender('male'); 
     }
@@ -540,19 +543,20 @@
         }
         
         const player = getParticipantDetails(nameToDelete);
-        if (!confirm(`确定要从常驻选手库中删除 "${nameToDelete}" (ID ${player.number}) 吗？\n删除后，其余选手的编号将重新排序。`)) return;
+        if (!confirm(`确定要从常驻选手库中删除 "${nameToDelete}" (ID ${player.number}) 吗？\n删除后，其余选手的编号将重新排序，但名单顺序不变。`)) return;
         
         let savedParticipants = getSavedParticipants();
         // 1. 过滤掉要删除的选手
         savedParticipants = savedParticipants.filter(p => p.name !== nameToDelete);
         
-        // 2. 重新分配编号 (getSavedParticipants 中已包含此逻辑，我们只需重新调用它来获取并保存新数组)
-        // 为了确保编号是按名字排序的连续编号，我们重新调用 getSavedParticipants
-        saveParticipantsToStorage(savedParticipants); // 先保存删除后的列表
-        getSavedParticipants(); // 立即加载并触发编号重排和保存
+        // 2. 重新分配编号：
+        //   - 将过滤后的列表保存回 localStorage。
+        //   - 调用 getSavedParticipants() 会自动加载新列表，并根据列表现有顺序（即加入顺序）重新分配 1, 2, 3... 的连续编号，并再次保存。
+        saveParticipantsToStorage(savedParticipants); 
+        getSavedParticipants(); // 触发编号重排和保存
         
-        loadSavedParticipantsUI(); // 重新加载常驻选手库
-        // 无需重载 currentRosterUI，因为删除前已经检查过它不在名单中
+        loadSavedParticipantsUI(); 
+        loadCurrentRosterUI(); // 重新加载参赛健儿名单，确保编号更新
     }
 
     /**
