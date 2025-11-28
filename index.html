@@ -122,7 +122,7 @@
             transform: translateY(-2px);
         }
 
-        /* ==================== 玩家列表 (保持不变) ==================== */
+        /* ==================== 选手列表 (修改：玩家 -> 选手) ==================== */
         #players-list {
             border: 1px solid var(--border-light);
             border-radius: 8px;
@@ -133,7 +133,7 @@
             text-align: left;
         }
 
-        /* 列表中每个玩家的样式 */
+        /* 列表中每个选手的样式 */
         #players-list > div { 
             display: flex;
             justify-content: space-between;
@@ -188,7 +188,7 @@
             font-weight: 700;
         }
 
-        /* 玩家名字标签样式 */
+        /* 选手名字标签样式 (修改：玩家 -> 选手) */
         #group-results > div span {
             display: inline-block;
             background-color: var(--primary-blue);
@@ -199,7 +199,7 @@
             font-size: 0.95em;
         }
 
-        /* 没有玩家时的提示 */
+        /* 没有选手时的提示 (修改：玩家 -> 选手) */
         .empty-message {
             color: #999;
             font-style: italic;
@@ -208,7 +208,7 @@
         }
 
         /* ==================================== */
-        /* 📱 媒体查询：适配手机和小尺寸屏幕 */
+        /* 📱 媒体查询：适配手机和小尺寸屏幕 (保持不变) */
         /* ==================================== */
         @media screen and (max-width: 768px) {
             body {
@@ -250,21 +250,21 @@
 
 <div class="container">
     <h1>2025黄豆豆冬奥会羽毛球分会场 🏆</h1>
-    <p>输入黄豆豆和她的朋友们的姓名，**开启竞技模式！**看看谁能笑到最后，登上冠军宝座！</p>
+    <p>输入参赛选手姓名，**开启竞技模式！**看看谁能笑到最后！</p>
 
-    <h2>玩家管理</h2>
-    <input type="text" id="player-name-input" placeholder="输入玩家姓名 (如: 大头兵张三)">
+    <h2>参赛选手管理</h2>
+    <input type="text" id="player-name-input" placeholder="输入参赛选手姓名 (如: 大头兵张三)">
     <div class="player-control-section">
-        <button id="add-player-btn" onclick="addPlayer()">添加玩家</button>
-        <button id="clear-players-btn" onclick="clearAllPlayers()">清空所有玩家</button>
+        <button id="add-player-btn" onclick="addPlayer()">添加选手</button>
+        <button id="clear-players-btn" onclick="clearAllPlayers()">清空所有选手</button>
     </div>
 
     <div id="players-list">
-        <p class="empty-message">暂无玩家，快来添加吧！</p>
+        <p class="empty-message">暂无参赛选手，快来添加吧！</p>
     </div>
 
     <h2>分组设置</h2>
-    <p>请输入每组的人数 (例如：2人一组进行双打)。</p>
+    <p>请输入每组的参赛人数 (例如：2人一组进行双打)。</p>
     <input type="number" id="group-size-input" value="2" min="1" placeholder="每组人数">
     <button id="group-players-btn" onclick="groupPlayers()">启动！黄豆豆分组模式</button>
 
@@ -275,7 +275,7 @@
 </div>
 
 <script>
-    let players = [];
+    let players = []; // 内部变量名保留英文，方便代码维护
     
     // ====================================
     // 🏸 神经病分组名称列表 (保持不变)
@@ -302,9 +302,9 @@
             input.value = '';
             updatePlayersList();
         } else if (!playerName) {
-            alert('请输入玩家姓名！');
+            alert('请输入参赛选手姓名！'); // 调整：玩家 -> 参赛选手
         } else {
-            alert('该玩家已存在！');
+            alert('该参赛选手已存在！'); // 调整：玩家 -> 参赛选手
         }
     }
 
@@ -314,7 +314,7 @@
     }
 
     function clearAllPlayers() {
-        if (confirm('确定要清空所有玩家吗？')) {
+        if (confirm('确定要清空所有参赛选手吗？')) { // 调整：玩家 -> 参赛选手
             players = [];
             updatePlayersList();
             document.getElementById('group-results').innerHTML = '<p class="empty-message">点击上方按钮开始分组。</p>';
@@ -324,7 +324,7 @@
     function updatePlayersList() {
         const listDiv = document.getElementById('players-list');
         if (players.length === 0) {
-            listDiv.innerHTML = '<p class="empty-message">暂无玩家，快来添加吧！</p>';
+            listDiv.innerHTML = '<p class="empty-message">暂无参赛选手，快来添加吧！</p>'; // 调整：玩家 -> 参赛选手
             return;
         }
         listDiv.innerHTML = players.map(player => `
@@ -348,15 +348,15 @@
         const groupSize = parseInt(groupSizeInput.value, 10);
 
         if (players.length === 0) {
-            alert('请先添加玩家！');
+            alert('请先添加参赛选手！'); // 调整：玩家 -> 参赛选手
             return;
         }
         if (isNaN(groupSize) || groupSize < 1) {
-            alert('每组人数必须是大于0的整数！');
+            alert('每组参赛人数必须是大于0的整数！'); // 调整：玩家 -> 参赛选手
             return;
         }
         if (players.length < groupSize) {
-            alert('玩家数量不足以分成一组！');
+            alert('参赛选手数量不足以分成一组！'); // 调整：玩家 -> 参赛选手
             return;
         }
 
@@ -368,7 +368,7 @@
             groups.push([]);
         }
 
-        // 轮流分配玩家到各个组，确保分组更均匀
+        // 轮流分配选手到各个组，确保分组更均匀
         for (let i = 0; i < shuffledPlayers.length; i++) {
             groups[i % numGroups].push(shuffledPlayers[i]);
         }
