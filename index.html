@@ -171,8 +171,13 @@
         } 
         .btn-draw:hover { background-color: #006AB0; }
         
-        /* 生成赛程/清空按钮共享红色 */
-        .btn-fixture, .btn-clear { 
+        /* 生成赛程按钮 (恢复到标准 .btn 样式) */
+        .btn-fixture {
+            background-color: var(--olympic-red); /* 红色 */
+            /* 宽度和尺寸继承自 .btn */
+        }
+        /* 清空按钮 (保持小尺寸和自适应宽度) */
+        .btn-clear { 
             background-color: var(--olympic-red); /* 红色 */
             width: auto; /* 清空按钮宽度自适应 */
             padding: 6px 10px; /* 清空按钮小尺寸 */
