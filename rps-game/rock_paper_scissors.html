@@ -24,18 +24,17 @@
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             display: flex;
-            flex-direction: column; /* 垂直排列 */
+            flex-direction: column; 
             gap: 30px;
         }
         
-        /* 新的居中标题样式 */
         .main-header {
             text-align: center;
-            color: #FF5722; /* 醒目的橙红色 */
+            color: #FF5722; 
             border-bottom: 3px solid #FF5722;
             padding-bottom: 20px;
             margin-bottom: 30px;
-            font-size: 2.5em; /* 增大标题 */
+            font-size: 2.5em; 
             font-weight: 800;
             letter-spacing: 1px;
         }
@@ -55,18 +54,17 @@
             margin-bottom: 20px;
         }
 
-        /* 调整内容区域布局 */
         .content-area {
             display: flex;
             gap: 30px;
             width: 100%;
         }
 
-        .left-panel, .player-control-section {
-            flex: 0 0 300px; /* 玩家管理固定宽度 */
+        .player-control-section {
+            flex: 0 0 300px; 
         }
         .right-panel {
-            flex: 1; /* 剩余空间给右侧 */
+            flex: 1; 
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -383,7 +381,7 @@
 
         const players = Array.from(activeCheckboxes).map(cb => cb.value); 
         const playerMoves = {};
-        const outcome = {}; 
+        const outcome = { winner: [], loser: [], draw: [] }; // 总是初始化空数组
         
         let allMoves = [];
         players.forEach(name => {
@@ -395,11 +393,14 @@
         
         // 判断当局结果
         if (movesSet.size === 1 || movesSet.size === 3) {
+            // 只有一种拳（平局）或三种拳（大平局）
             outcome.draw = players;
         } else {
+            // 只有两种拳，存在胜负方
             const movesArr = Array.from(movesSet); 
             let winningMove, losingMove;
             
+            // 确定哪种拳获胜 (例如: 石头胜剪刀)
             if (getResult(movesArr[0], movesArr[1]) === 'win') {
                 winningMove = movesArr[0];
                 losingMove = movesArr[1];
@@ -408,16 +409,23 @@
                 losingMove = movesArr[0];
             }
             
+            // 确定胜负玩家
             players.forEach(name => {
                 const move = playerMoves[name];
                 if (move.name === winningMove) {
-                    if (!outcome.winner) outcome.winner = [];
                     outcome.winner.push(name);
                 } else if (move.name === losingMove) {
-                    if (!outcome.loser) outcome.loser = [];
                     outcome.loser.push(name);
                 }
+                // 修复：如果玩家出的拳既不是 winningMove 也不是 losingMove，则为 draw
+                // 但在两人对战中，这不可能发生。保险起见，保持现有逻辑。
             });
+
+            // 关键修复：对于双人对战，如果一方是赢家，另一方必须是输家（除非是平局，已在上边处理）
+            if (players.length === 2 && outcome.winner.length > 0 && outcome.loser.length === 0) {
+                 // 理论上不应该发生，除非有一个人出了既不是赢拳也不是输拳的第三种拳，但在两人两拳的情况下不可能。
+                 // 但为保险起见，这里不需要额外逻辑，因为双人对战逻辑上必然是 1v1 或 平局。
+            }
         }
         
         // 更新分数和连胜/连败记录
@@ -425,15 +433,15 @@
             let score = playerScores[name];
             score.totalGames++;
 
-            if (outcome.winner && outcome.winner.includes(name)) {
+            if (outcome.winner.includes(name)) {
                 score.wins++;
                 score.winStreak++;
                 score.loseStreak = 0;
-            } else if (outcome.loser && outcome.loser.includes(name)) {
+            } else if (outcome.loser.includes(name)) {
                 score.losses++;
                 score.loseStreak++;
                 score.winStreak = 0;
-            } else if (outcome.draw && outcome.draw.includes(name)) {
+            } else if (outcome.draw.includes(name)) {
                 score.draws++;
                 score.winStreak = 0;
                 score.loseStreak = 0;
@@ -460,23 +468,23 @@
         for (const name in playerMoves) {
             const move = playerMoves[name];
             let status = '';
-            if (outcome.winner && outcome.winner.includes(name)) status = '<span class="winner"> (胜) </span>';
-            else if (outcome.loser && outcome.loser.includes(name)) status = '<span class="loser"> (败) </span>';
-            else if (outcome.draw && outcome.draw.includes(name)) status = '<span class="draw"> (平) </span>';
+            if (outcome.winner.includes(name)) status = '<span class="winner"> (胜) </span>';
+            else if (outcome.loser.includes(name)) status = '<span class="loser"> (败) </span>';
+            else if (outcome.draw.includes(name)) status = '<span class="draw"> (平) </span>';
 
             html += `<p class="player-move">${name}: ${move.name} <span class="emoji-big">${move.emoji}</span> ${status}</p>`;
         }
 
         html += '<div style="margin-top: 15px;">';
-        if (outcome.winner) {
+        if (outcome.winner.length > 0) {
             html += `<p class="winner">👑 本局赢家: ${outcome.winner.join(', ')}</p>`;
         }
-        if (outcome.loser) {
+        if (outcome.loser.length > 0) {
             html += `<p class="loser">💀 本局输家: ${outcome.loser.join(', ')}</p>`;
         }
-        if (outcome.draw && playerCount > 2) {
+        if (outcome.draw.length > 0 && playerCount > 2) {
              html += `<p class="draw">🤝 平局玩家: ${outcome.draw.join(', ')}</p>`;
-        } else if (outcome.draw && playerCount == 2) {
+        } else if (outcome.draw.length > 0 && playerCount == 2) {
             html += `<p class="draw">🤝 双方平局！</p>`;
         }
         html += '</div>';
@@ -496,9 +504,9 @@
             let summary = players.map(name => {
                 const move = round.playerMoves[name];
                 let statusClass = '';
-                if (round.outcome.winner && round.outcome.winner.includes(name)) statusClass = 'winner';
-                else if (round.outcome.loser && round.outcome.loser.includes(name)) statusClass = 'loser';
-                else if (round.outcome.draw && round.outcome.draw.includes(name)) statusClass = 'draw';
+                if (round.outcome.winner.includes(name)) statusClass = 'winner';
+                else if (round.outcome.loser.includes(name)) statusClass = 'loser';
+                else if (round.outcome.draw.includes(name)) statusClass = 'draw';
                 
                 return `<span class="${statusClass}">${name} <span class="emoji-big" style="font-size: 1.2em;">${move.emoji}</span></span>`;
             }).join(' | ');
